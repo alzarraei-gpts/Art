@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>باقة الفن والأزياء | واجهة نيون هولوغرافية</title>
 <meta name="description" content="واجهة ويب داكنة بنمط نيون هولوغرافي لعرض باقة الفن والأزياء مع أيقونات دائرية هولوغرافية، بحث، تصفية، وبطاقات أدوات تفاعلية." />
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=MV3TSjevZ5LWhzAB439i5j179em2hu1qj4p8i3lTEsasVpDcTf0eHbSo2OuaJsQASctTQw-74kLD0WV0ldsiX3zhPSFhUFdoXasvAwMOGn2kJkW7fEEN4sCzwtAUCEqcUr3qCwSR_hUTcJ0plnpuGKWOwwzuAFIopyDS7RRpV19Q_XCJmqvs4gq6dAPytc1iFFYO3XDpzSY5af0VDHqj11QkiipaMH19HYf2PRXhPoAk-8aRK-2zMm4s93RerfqIzAqgUsjl6Cw3XZL581EFBA" charset="UTF-8"></script><style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=eBB-GBK_Dt5r8nn7On1WpU-aplUk2pKhH0cDcemFP1voz4KfmuGmfsIXAz2IyhLqBy2-hIxLD_8mqwjboc9RL1JkNSGuW5XnFPgJ7Gd6ysvuIyk8wCyTMRRMbwHgpXtkxK33U43cmG1qmrLG59JjC9ZxNzrg0VLc1wFZpiXNdMuDp4KDov-4lQIxiLp9TAiexC6dKQ7JkbUK6_XQRlBuh6Bk73iRzg7jf1CG8N-8d6fv1frx7ssPl4GCm8V_bb8rwkupcKmbzdNUun_G5_3BCg" charset="UTF-8"></script><style>
 :root{
   --bg:#030603;
   --bg-2:#071107;
@@ -561,6 +561,138 @@ select.btn, .field select{appearance:none;-webkit-appearance:none;background-ima
 .category-btn svg{order:1;justify-self:start}
 /* حذف شارة التصنيف المتكررة داخل بطاقات البوتات والأدوات: لا يظهر اسم التصنيف ولا الأيقونة الجانبية داخل البطاقة. */
 .tool-card .category-pill{display:none!important;visibility:hidden!important;width:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;}
+
+
+/* === RTL section flip + compact height refinements === */
+.command-panel{
+  direction:ltr !important;
+  grid-template-columns:190px repeat(4,minmax(128px,1fr)) minmax(310px,1.35fr) !important;
+  gap:12px !important;
+  padding:14px 16px !important;
+  min-height:0 !important;
+  align-items:stretch !important;
+}
+.command-panel .quick-buttons{
+  min-height:0 !important;
+  align-content:center !important;
+}
+.command-panel .quick-buttons .btn{
+  min-height:40px !important;
+  padding:8px 12px !important;
+}
+.command-panel .stat-card{
+  min-height:112px !important;
+  padding:12px 12px !important;
+  gap:6px !important;
+}
+.command-panel .stat-card .holo-icon.small{
+  --size:42px !important;
+}
+.command-panel .stat-card strong{
+  font-size:28px !important;
+}
+.command-panel .stat-card span{
+  font-size:12px !important;
+}
+.command-panel .intro-card{
+  direction:rtl !important;
+  min-height:112px !important;
+  padding:16px 18px !important;
+  gap:14px !important;
+  grid-template-columns:auto 1fr !important;
+}
+.command-panel .intro-card .holo-icon{
+  --size:58px !important;
+}
+.command-panel .intro-card h2{
+  font-size:clamp(24px,2.2vw,34px) !important;
+  margin-bottom:6px !important;
+}
+.command-panel .intro-card p{
+  font-size:13px !important;
+  line-height:1.65 !important;
+}
+.command-panel .badge{
+  margin-bottom:8px !important;
+  padding:6px 10px !important;
+}
+
+/* مركز الأدوات: يبدأ من اليمين بالعنوان وينتهي يسارًا بإعادة الضبط */
+.center-head{
+  direction:ltr !important;
+  grid-template-columns:auto minmax(220px,1fr) auto !important;
+  grid-template-areas:"reset spacer title" !important;
+  min-height:64px !important;
+  padding:10px 14px !important;
+  gap:14px !important;
+}
+.center-head #resetBtn{
+  grid-area:reset !important;
+  justify-self:start !important;
+  min-height:40px !important;
+  padding:8px 13px !important;
+}
+.center-head #motionBtn{
+  grid-area:spacer !important;
+  justify-self:start !important;
+  min-height:38px !important;
+  padding:8px 12px !important;
+}
+.center-head .center-title{
+  grid-area:title !important;
+  justify-self:end !important;
+  direction:rtl !important;
+  text-align:right !important;
+}
+.center-head .center-title .holo-icon{
+  --size:48px !important;
+}
+.center-head .center-title h2{
+  font-size:26px !important;
+  margin:0 !important;
+}
+.center-head .center-title p{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+/* تثبيت الأيقونة قبل النص في الأزرار داخل الواجهات العربية */
+.btn{
+  flex-direction:row !important;
+}
+.btn svg{
+  order:-1 !important;
+}
+
+/* استجابة الشاشات المتوسطة والصغيرة */
+@media(max-width:1240px){
+  .command-panel{
+    grid-template-columns:1fr 1fr !important;
+    direction:rtl !important;
+  }
+  .command-panel .intro-card{
+    grid-column:1/-1 !important;
+    order:-1 !important;
+  }
+}
+@media(max-width:820px){
+  .command-panel{
+    grid-template-columns:1fr !important;
+    padding:12px !important;
+  }
+  .center-head{
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "title"
+      "spacer"
+      "reset" !important;
+  }
+  .center-head .center-title,
+  .center-head #motionBtn,
+  .center-head #resetBtn{
+    justify-self:stretch !important;
+  }
+}
 
 </style>
 </head>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>باقة الفن والأزياء | واجهة نيون هولوغرافية</title>
 <meta name="description" content="واجهة ويب داكنة بنمط نيون هولوغرافي لعرض باقة الفن والأزياء مع أيقونات دائرية هولوغرافية، بحث، تصفية، وبطاقات أدوات تفاعلية." />
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=eBB-GBK_Dt5r8nn7On1WpU-aplUk2pKhH0cDcemFP1voz4KfmuGmfsIXAz2IyhLqBy2-hIxLD_8mqwjboc9RL1JkNSGuW5XnFPgJ7Gd6ysvuIyk8wCyTMRRMbwHgpXtkxK33U43cmG1qmrLG59JjC9ZxNzrg0VLc1wFZpiXNdMuDp4KDov-4lQIxiLp9TAiexC6dKQ7JkbUK6_XQRlBuh6Bk73iRzg7jf1CG8N-8d6fv1frx7ssPl4GCm8V_bb8rwkupcKmbzdNUun_G5_3BCg" charset="UTF-8"></script><style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=6Nq3relUA5lLkyUlNWkQkak4dycbantq0eSgmNLzRGRV5YKsY-caSVKnpnHZNPL6N2Vzmr9Kv25OzNYwNTNfyqHACam9kLmtbWqWRkARkEqzugHm-gZlk6gu84jZZo3E-85gOtjH1s_2jIddFtRLMwTcHwPkFpSKkRUnssIeb-pZDZ_7GZwxAetxVstCagsBviorDIxu9N3y5uas0DCz-2srAhq_ubxorPDJ1HQe7h4fPD_hfJLPYNNZLTAOpiwcPL0T0XML_wqkrjgXFT5ODg" charset="UTF-8"></script><style>
 :root{
   --bg:#030603;
   --bg-2:#071107;
@@ -694,6 +694,19 @@ select.btn, .field select{appearance:none;-webkit-appearance:none;background-ima
   }
 }
 
+
+/* === تشغيل فعلي لروابط ChatGPT وGemini === */
+a.btn{
+  text-decoration:none;
+}
+.card-actions a.btn, .modal-foot a.btn{
+  color:inherit;
+}
+.card-actions a.btn:focus-visible, .modal-foot a.btn:focus-visible{
+  outline:2px solid rgba(149,242,29,.7);
+  outline-offset:3px;
+}
+
 </style>
 </head>
 <body>
@@ -784,13 +797,17 @@ select.btn, .field select{appearance:none;-webkit-appearance:none;background-ima
     </header>
     <div class="modal-body" id="modalBody"></div>
     <footer class="modal-foot">
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="copyTool">نسخ الوصف</button><button class="btn ghost" type="button">تشغيل ChatGPT</button><button class="btn ghost" type="button">تشغيل Gemini</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="copyTool">نسخ الوصف</button><a class="btn ghost" id="modalChatGPT" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">تشغيل ChatGPT</a><a class="btn ghost" id="modalGemini" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">تشغيل Gemini</a></div>
       <button class="btn" id="closeModal2" type="button">إغلاق</button>
     </footer>
   </article>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite">تم النسخ</div>
 <script>
+const PLATFORM_LINKS={
+  chatgpt:"https://chatgpt.com/",
+  gemini:"https://gemini.google.com/app"
+};
 const iconPaths={
   brain:'<path d="M10 4.5C7.8 2.8 4.5 4.3 4.5 7.1c0 .8.2 1.5.7 2.1-1.2.6-2 1.8-2 3.2 0 1.8 1.3 3.3 3 3.6-.2 2.4 2.6 4.1 4.4 2.5V4.5Z"/><path d="M14 4.5c2.2-1.7 5.5-.2 5.5 2.6 0 .8-.2 1.5-.7 2.1 1.2.6 2 1.8 2 3.2 0 1.8-1.3 3.3-3 3.6.2 2.4-2.6 4.1-4.4 2.5V4.5Z"/><path d="M10 9H7.5M14 9h2.5M10 14H7.8M14 14h2.2"/>',
   palette:'<path d="M12 3a9 9 0 0 0 0 18h1.2a2 2 0 0 0 1.4-3.4 1.7 1.7 0 0 1 1.2-2.9H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="10.5" cy="7.5" r="1"/><circle cx="14.2" cy="7.8" r="1"/><circle cx="16.5" cy="11" r="1"/>',
@@ -813,57 +830,391 @@ const iconPaths={
 function svgIcon(key){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${iconPaths[key]||iconPaths.palette}</svg>`}
 document.querySelectorAll('[data-icon]').forEach(el=>{el.innerHTML=svgIcon(el.dataset.icon)});
 const categories=[
-  {key:'all',name:'كل النماذج',icon:'cube'},
-  {key:'face',name:'نماذج الكتابة على الوجه',icon:'face'},
-  {key:'covers',name:'نماذج الأغلفة والقوالب',icon:'cover'},
-  {key:'ornament',name:'نماذج تصميم الزخارف',icon:'ornament'},
-  {key:'fashion',name:'نماذج الأزياء والخامات',icon:'fabric'},
-  {key:'surreal',name:'نماذج الفن السريالي',icon:'palette'},
-  {key:'lighting',name:'نماذج الإضاءة والتكوين',icon:'camera'},
-  {key:'brand',name:'نماذج الهوية البصرية',icon:'star'},
-  {key:'prompt',name:'نماذج البرومبت البصري',icon:'type'},
-  {key:'tools',name:'أدوات مساعدة',icon:'tools'}
+  {
+    "key": "all",
+    "name": "كل النماذج",
+    "icon": "cube"
+  },
+  {
+    "key": "face",
+    "name": "نماذج الكتابة على الوجه",
+    "icon": "face"
+  },
+  {
+    "key": "covers",
+    "name": "نماذج الأغلفة والقوالب",
+    "icon": "cover"
+  },
+  {
+    "key": "ornament",
+    "name": "نماذج تصميم الزخارف",
+    "icon": "ornament"
+  },
+  {
+    "key": "drawing",
+    "name": "نماذج التصميم بالرسم",
+    "icon": "palette"
+  },
+  {
+    "key": "fashion",
+    "name": "نماذج الأزياء والإكسسوارات",
+    "icon": "fabric"
+  },
+  {
+    "key": "surreal",
+    "name": "نماذج الفنون السريالية",
+    "icon": "palette"
+  },
+  {
+    "key": "lighting",
+    "name": "نماذج التصميم الضوئي",
+    "icon": "camera"
+  },
+  {
+    "key": "african",
+    "name": "تصميم التراث الافريقي",
+    "icon": "fabric"
+  },
+  {
+    "key": "textures",
+    "name": "نماذج الخامات",
+    "icon": "fabric"
+  }
 ];
 const tools=[
-  {title:'الكتابة على الوجه',cat:'face',icon:'face',desc:'يوفر هذا البوت وسيلة فنية ذكية لتحويل الوجوه إلى أعمال خطية عربية فريدة، حيث يعاد بناء الملامح والهيئة باستخدام الحروف العربية نفسها بدل الرسم التقليدي.'},
-  {title:'تايبوجرافي على الوجه',cat:'face',icon:'type',desc:'يحوّل النص إلى ملامح حية عبر تقنية التايبوجرافي الضوئي، فيعيد بناء الوجه بالحروف بدقة واقعية تحاكي انعكاسات البشرة والظل والنور.'},
-  {title:'تايبوجرافي متكيّف مع الخامة',cat:'face',icon:'fabric',desc:'يفيد المصممين في دمج النصوص مع الأسطح المنحنية أو ثلاثية الأبعاد بطريقة مدروسة، ويساعد على تكييف الحروف مع الخامة والانحناء.'},
-  {title:'تصميم أغلفة المجلات',cat:'covers',icon:'cover',desc:'يساعد على بناء غلاف مجلة احترافي يجمع العنوان والصورة والعناصر البصرية ضمن تكوين متوازن مناسب للطباعة والنشر الرقمي.'},
-  {title:'تصميم أغلفة الكتب',cat:'covers',icon:'cover',desc:'ينشئ تصورًا بصريًا لغلاف كتاب بناءً على فكرته وجمهوره ونبرته، مع اقتراح ألوان وخطوط وتكوينات مناسبة.'},
-  {title:'تصميم الوشم التجريدي',cat:'ornament',icon:'tattoo',desc:'يقترح أشكال وشم تجريدية تعتمد على الخطوط والانسياب الرمزي والتوازن بين المساحة الفارغة والكتلة البصرية.'},
-  {title:'تصميم الزخارف الحديثة',cat:'ornament',icon:'ornament',desc:'يبني وحدات زخرفية معاصرة مستلهمة من الأنماط الهندسية والعضوية، مناسبة للأزياء والأغلفة والهويات البصرية.'},
-  {title:'تحليل خامة القماش',cat:'fashion',icon:'fabric',desc:'يقرأ نوع الخامة وطبيعة الانعكاس والملمس ويقترح وصفًا بصريًا قابلًا للاستخدام في التصميم أو توليد الصور.'},
-  {title:'توليد أزياء مستقبلية',cat:'fashion',icon:'fabric',desc:'يطوّر أفكار أزياء مستقبلية تجمع الخامات اللامعة والبنية النحتية والإضاءة النيونية ضمن مشهد بصري جذاب.'},
-  {title:'لوحة ألوان فنية',cat:'brand',icon:'palette',desc:'يقترح لوحة ألوان متناسقة للمشروع الفني مع تفسير دلالات الألوان ودرجة التباين والاستخدام الأنسب لكل لون.'},
-  {title:'هوية بصرية فنية',cat:'brand',icon:'star',desc:'يساعد على بناء اتجاه بصري متكامل للعلامة الفنية من الشعار إلى الألوان والخطوط والأنماط المصاحبة.'},
-  {title:'مشهد سريالي للأزياء',cat:'surreal',icon:'palette',desc:'يحوّل الفكرة إلى مشهد سريالي غني بالتكوين والرمزية والخامات غير المتوقعة مع وصف جاهز للتوليد الصوري.'},
-  {title:'بورتريه فني خيالي',cat:'surreal',icon:'face',desc:'يصوغ وصفًا لبورتريه فني يجمع الملامح البشرية مع عناصر رمزية أو ضوئية أو نباتية بطريقة متماسكة.'},
-  {title:'تكوين إضاءة استوديو',cat:'lighting',icon:'camera',desc:'يقترح إعدادات إضاءة احترافية للمنتج أو الموديل أو المشهد الفني مع تحديد اتجاه الضوء والظل والخلفية.'},
-  {title:'تحسين زاوية العرض',cat:'lighting',icon:'compass',desc:'يساعد على اختيار زاوية كاميرا أكثر تأثيرًا لإظهار الخامة أو المجسم أو الزي أو العمل الفني بصورة احترافية.'},
-  {title:'برومبت تصوير منتج فني',cat:'prompt',icon:'type',desc:'ينتج برومبت تصوير مفصل للمنتجات الفنية يشمل العدسة والإضاءة والخلفية والخامة وتوزيع العناصر.'},
-  {title:'برومبت أزياء فاخر',cat:'prompt',icon:'type',desc:'يصيغ وصفًا بصريًا لأزياء فاخرة مع تفاصيل القماش والقصّة والإكسسوارات والحركة وبيئة التصوير.'},
-  {title:'تحليل صورة مرجعية',cat:'tools',icon:'search',desc:'يفكك الصورة المرجعية إلى عناصرها البصرية الأساسية مثل اللون والخامة والضوء والكتلة والتكوين والأسلوب.'},
-  {title:'اقتراح بدائل تصميمية',cat:'tools',icon:'layers',desc:'ينتج عدة بدائل تصميمية للفكرة نفسها مع اختلافات في النمط واللون والبناء البصري دون فقدان الهوية العامة.'},
-  {title:'تحويل النص إلى لوحة',cat:'surreal',icon:'palette',desc:'يحوّل النص الأدبي أو الفكرة المجردة إلى لوحة فنية قابلة للتوليد، مع ضبط الأسلوب والرمزية والمشهد.'},
-  {title:'توليد نمط زخرفي متكرر',cat:'ornament',icon:'ornament',desc:'ينشئ وصفًا لنمط زخرفي قابل للتكرار على الأقمشة أو الخلفيات أو الأغلفة مع مراعاة الاتساق الهندسي.'},
-  {title:'تنسيق بطاقة عرض أزياء',cat:'fashion',icon:'fabric',desc:'يساعد على إعداد بطاقة عرض للزي تشمل وصف التصميم والخامة والمناسبة والجمهور المستهدف وطريقة العرض.'},
-  {title:'تصميم قناع فني',cat:'surreal',icon:'face',desc:'يبني تصورًا لقناع فني أو مسرحي يجمع الزخرفة والخامة والإضاءة والمعنى الرمزي بصورة متوازنة.'},
-  {title:'تصميم ملصق معرض',cat:'covers',icon:'cover',desc:'يقترح ملصقًا بصريًا لمعرض فني مع توزيع النصوص والصورة والشعار والمساحة البيضاء بطريقة جذابة.'},
-  {title:'تكوين عرض مانكان',cat:'fashion',icon:'camera',desc:'ينظم طريقة عرض الزي على المانكان أو النموذج مع تحديد الوقفة والخلفية والإضاءة واللقطة المناسبة.'},
-  {title:'معالجة خلفية فنية',cat:'lighting',icon:'layers',desc:'يقترح خلفيات فنية متجانسة مع العمل، مثل الخلفية الضبابية أو النسيجية أو النيونية أو الاستوديو الداكن.'},
-  {title:'تحويل الخامة إلى وصف',cat:'fashion',icon:'fabric',desc:'يصوغ وصفًا دقيقًا للخامة من حيث الملمس واللمعان والسماكة والحركة والانعكاس لاستخدامه في التصميم.'},
-  {title:'وصف لوحة كلاسيكية',cat:'prompt',icon:'palette',desc:'يبني وصفًا فنيًا متوازنًا يحاكي اللوحات الكلاسيكية من حيث التكوين والضوء والملابس والرمزية.'},
-  {title:'تصميم أيقونة فنية',cat:'brand',icon:'star',desc:'يقترح أيقونة بصرية مختزلة تصلح لباقة أو أداة أو تطبيق، مع المحافظة على الوضوح عند التصغير.'},
-  {title:'إعادة صياغة وصف فني',cat:'tools',icon:'type',desc:'يعيد صياغة الوصف الفني ليصبح أكثر دقة وقابلية للتنفيذ في أدوات توليد الصور أو مواد العرض.'},
-  {title:'اختبار تباين الألوان',cat:'tools',icon:'palette',desc:'يفحص توازن الألوان المقترحة ومدى وضوحها بصريًا داخل خلفيات داكنة أو فاتحة أو شفافة.'},
-  {title:'تصميم واجهة معرض',cat:'brand',icon:'layers',desc:'يقترح تصور واجهة رقمية لعرض الأعمال الفنية والأزياء مع بطاقات وصور ومسارات تصفح واضحة.'},
-  {title:'مشهد نيون هولوغرافي',cat:'surreal',icon:'chip',desc:'ينتج وصفًا لمشهد نيون هولوغرافي داكن يتضمن حلقات ضوئية ومنصة زجاجية وأيقونات متوهجة ومركزًا مضيئًا.'},
-  {title:'تنسيق كتالوج أزياء',cat:'covers',icon:'cover',desc:'يساعد على بناء صفحات كتالوج أزياء تشمل العناوين والصور والوصف والمقاسات وملاحظات العرض.'},
-  {title:'توجيه جلسة تصوير',cat:'lighting',icon:'camera',desc:'يضع خطة موجزة لجلسة تصوير فنية تشمل المشهد واللقطات والإضاءة والملابس والملحقات.'},
-  {title:'تحويل الفكرة إلى moodboard',cat:'brand',icon:'layers',desc:'يحول فكرة المشروع إلى لوحة مزاجية تشمل الألوان والخامات والأشكال والصور المرجعية والاتجاه الأسلوبي.'},
-  {title:'نحت بصري ثلاثي الإيحاء',cat:'surreal',icon:'cube',desc:'يقترح تكوينًا بصريًا يوحي بالنحت والثري دي دون الاعتماد على مجسم فعلي، مع وصف المنصة والضوء والظل.'},
-  {title:'تصميم قالب منشور فني',cat:'covers',icon:'cover',desc:'يبني قالب منشور قابل للاستخدام في الشبكات الاجتماعية مع مساحة عنوان وصورة ووصف وعلامة بصرية.'},
-  {title:'مراجعة احترافية للبرومبت',cat:'tools',icon:'tools',desc:'يفحص البرومبت الفني ويقترح تعديلات تزيد وضوح الخامة والضوء والتكوين ونمط الإخراج.'}
+  {
+    "title": "الكتابة على الوجه",
+    "sourceTitle": "الكتابة على الوجه",
+    "cat": "face",
+    "chatgpt": "https://chatgpt.com/g/g-69466003657081919e6e516cb77e7318-thwyl-lwjwh-l-ktbt-convert-images-to-text",
+    "gemini": "https://gemini.google.com/gem/1b6k_TcY66IhutW81wjkzF2WNVmBJP9iL?usp=sharing",
+    "icon": "face",
+    "desc": "يساعد هذا النموذج على تنفيذ معالجة بصرية مرتبطة بالوجه والكتابة أو الخامة، مع مخرجات مناسبة للأعمال الفنية والإعلانية."
+  },
+  {
+    "title": "تايبوغرافي على الوجه",
+    "sourceTitle": "تايبوغرافي على الوجه",
+    "cat": "face",
+    "chatgpt": "https://chatgpt.com/g/g-68e69b884240819190af47afc8df1c46-tsmym-tybwgrfy-l-lwjh-typographic-design",
+    "gemini": "https://gemini.google.com/gem/1D3sixN8qdLJUCT54IjpSceZlIrE-XS0E?usp=sharing",
+    "icon": "face",
+    "desc": "يساعد هذا النموذج على تنفيذ معالجة بصرية مرتبطة بالوجه والكتابة أو الخامة، مع مخرجات مناسبة للأعمال الفنية والإعلانية."
+  },
+  {
+    "title": "تايبوغرافي متكيف مع الخامة",
+    "sourceTitle": "تايبوغرافي متكيف مع الخامة",
+    "cat": "face",
+    "chatgpt": "https://chatgpt.com/g/g-697505c76ee0819190a0fd60133ab5c3-tybwgrfy-mtkywf-m-lkhm-material-typography",
+    "gemini": "https://gemini.google.com/gem/1uYzPqlnfZCvRoER4Qbcs_aTh1ti3C3Zg?usp=sharing",
+    "icon": "type",
+    "desc": "يساعد هذا النموذج على تنفيذ معالجة بصرية مرتبطة بالوجه والكتابة أو الخامة، مع مخرجات مناسبة للأعمال الفنية والإعلانية."
+  },
+  {
+    "title": "تصميم الوشم التجريدي",
+    "sourceTitle": "تصميم الوشم التجريدي",
+    "cat": "face",
+    "chatgpt": "https://chatgpt.com/g/g-6974f1905f3c8191aae303911cc426d7-tybwgrfy-blkht-l-rby-typography",
+    "gemini": "https://gemini.google.com/gem/1jPlDluBNR5ZM_qfLYLBm7ifR28tfBTn2?usp=sharing",
+    "icon": "tattoo",
+    "desc": "يساعد هذا النموذج على تنفيذ معالجة بصرية مرتبطة بالوجه والكتابة أو الخامة، مع مخرجات مناسبة للأعمال الفنية والإعلانية."
+  },
+  {
+    "title": "تصميم أغلفة الكتب",
+    "sourceTitle": "تصميم أغلفة الكتب",
+    "cat": "covers",
+    "chatgpt": "https://chatgpt.com/g/g-684bc4365cf88191bee81ad4e17c73a4-tsmym-glf-ktb-book-cover-designer",
+    "gemini": "https://gemini.google.com/gem/1-VL7ffqqQVLHknZFcOKdKhIUJlOM-bH6?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأغلفة والقوالب والعروض البصرية الجاهزة، مع مراعاة التكوين والهوية والجاذبية التسويقية."
+  },
+  {
+    "title": "تصميم أغلفة المجلات",
+    "sourceTitle": "تصميم أغلفة المجلات",
+    "cat": "covers",
+    "chatgpt": "https://chatgpt.com/g/g-68db65d315f88191b5636568c9dfc4cd-tsmym-zy-glf-lmjlt-heritage-fusion",
+    "gemini": "https://gemini.google.com/gem/1rR-ICKSnaxkx0HsW26i7rN4uh9_-aX6l?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأغلفة والقوالب والعروض البصرية الجاهزة، مع مراعاة التكوين والهوية والجاذبية التسويقية."
+  },
+  {
+    "title": "تصميم أغلفة مجلات بلون موحّد",
+    "sourceTitle": "تصميم أغلفة مجلات بلون موحّد",
+    "cat": "covers",
+    "chatgpt": "https://chatgpt.com/g/g-68db50efd6008191b6b662cfa471c004-msmm-zy-mlbs-sry-fabric-fashion-designer",
+    "gemini": "https://gemini.google.com/gem/11yUxzuav9gGf7pZp_ySqA12d8wj0vh1X?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأغلفة والقوالب والعروض البصرية الجاهزة، مع مراعاة التكوين والهوية والجاذبية التسويقية."
+  },
+  {
+    "title": "تصميم أغلفة المنتجات",
+    "sourceTitle": "تصميم أغلفة المنتجات",
+    "cat": "covers",
+    "chatgpt": "https://chatgpt.com/g/g-68ccd3aa85d48191b022e487fe8a81fa-tsmym-glf-lmntjt-product-packaging-design",
+    "gemini": "https://gemini.google.com/gem/148zX7Jr_To0G2e3tX8a2k4tvxu3O8MXV?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأغلفة والقوالب والعروض البصرية الجاهزة، مع مراعاة التكوين والهوية والجاذبية التسويقية."
+  },
+  {
+    "title": "تصميم أغطية حماية شفافة",
+    "sourceTitle": "تصميم أغطية حماية شفافة",
+    "cat": "covers",
+    "chatgpt": "https://chatgpt.com/g/g-69862fad98388191bf311d1e4318855f-tlbys-lmntj-bhmy-wqy-ppf-shield-wrapper",
+    "gemini": "https://gemini.google.com/gem/13qRuB-TedNHwGZ0rF9nMgfy3WdvM_6Mq?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأغلفة والقوالب والعروض البصرية الجاهزة، مع مراعاة التكوين والهوية والجاذبية التسويقية."
+  },
+  {
+    "title": "تصميم قوالب زجاجية",
+    "sourceTitle": "تصميم قوالب زجاجية",
+    "cat": "covers",
+    "chatgpt": "https://chatgpt.com/g/g-69a86df9d8848191ade9a446cb5e2fe9-twlyd-ltsmym-lzjjy-glass-design-3d",
+    "gemini": "https://gemini.google.com/gem/1wbq1uTvIBsQtfMZJAl0jTOGfYDXlMRWE?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأغلفة والقوالب والعروض البصرية الجاهزة، مع مراعاة التكوين والهوية والجاذبية التسويقية."
+  },
+  {
+    "title": "تصميم زخارف إسلامية",
+    "sourceTitle": "تصميم زخارف إسلامية",
+    "cat": "ornament",
+    "chatgpt": "https://chatgpt.com/g/g-684ad230059c8191932c45962048441e-bwt-lzkhrf-lslmy-islamic-decoration-expert",
+    "gemini": "https://gemini.google.com/gem/1_8ANwZdSsoawATgCoHVnLhBvJsFAysob?usp=sharing",
+    "icon": "ornament",
+    "desc": "يساعد هذا النموذج على إنشاء زخارف منظمة ومتناسقة تصلح للتصميم الفني والديكور والهوية البصرية."
+  },
+  {
+    "title": "تصميم زخارف كلاسيكية",
+    "sourceTitle": "تصميم زخارف كلاسيكية",
+    "cat": "ornament",
+    "chatgpt": "https://chatgpt.com/g/g-68e1e65eceb48191ab639385fb2c219e-tsmym-lzkhrf-lklsyky-classical-wall-design",
+    "gemini": "https://gemini.google.com/gem/1LeGDUasl_66DVfFX9dYwOjQ9awqoHre2?usp=sharing",
+    "icon": "ornament",
+    "desc": "يساعد هذا النموذج على إنشاء زخارف منظمة ومتناسقة تصلح للتصميم الفني والديكور والهوية البصرية."
+  },
+  {
+    "title": "فن التصميم بالقلم الرصاص",
+    "sourceTitle": "فن التصميم بالقلم الرصاص",
+    "cat": "drawing",
+    "chatgpt": "https://chatgpt.com/g/g-68eb370f9b248191a15bee1531efcb98-fn-lrsm-blqlm-lrss-pencil-drawing-art",
+    "gemini": "https://gemini.google.com/gem/1vrrC8vKMpk-5A3JI1K1Ei_4N99gWCm4Z?usp=sharing",
+    "icon": "type",
+    "desc": "يوجه هذا النموذج عملية الرسم الفني بأنماط وخامات مختلفة، مع وصف بصري قابل للاستخدام في التصميم أو التوليد."
+  },
+  {
+    "title": "فن التصميم بالألوان المائية",
+    "sourceTitle": "فن التصميم بالألوان المائية",
+    "cat": "drawing",
+    "chatgpt": "https://chatgpt.com/g/g-68eb358d19b48191b9875fe06e778045-fn-lrsm-bllwn-lmyy-watercolor-painting",
+    "gemini": "https://gemini.google.com/gem/12Amx2sKfnRAs5xb07Cfdo_e0XQ0I1Ixo?usp=sharing",
+    "icon": "palette",
+    "desc": "يوجه هذا النموذج عملية الرسم الفني بأنماط وخامات مختلفة، مع وصف بصري قابل للاستخدام في التصميم أو التوليد."
+  },
+  {
+    "title": "فن التصميم بالألوان الزيتية",
+    "sourceTitle": "فن التصميم بالألوان الزيتية",
+    "cat": "drawing",
+    "chatgpt": "https://chatgpt.com/g/g-68eb37d9af30819194cfb2f389986606-fn-lrsm-bllwn-lzyty-oil-painting-art",
+    "gemini": "https://gemini.google.com/gem/1XoyNoyqxpF5PNcZ-xtiQz0u0Mk6XXJV4?usp=sharing",
+    "icon": "palette",
+    "desc": "يوجه هذا النموذج عملية الرسم الفني بأنماط وخامات مختلفة، مع وصف بصري قابل للاستخدام في التصميم أو التوليد."
+  },
+  {
+    "title": "فن التصميم بالمساحيق",
+    "sourceTitle": "فن التصميم بالمساحيق",
+    "cat": "drawing",
+    "chatgpt": "https://chatgpt.com/g/g-68ea3e8c1ce08191adc96b8faebddf7f-fn-lrsm-blmshyq-powder-drawing-art",
+    "gemini": "https://gemini.google.com/gem/1xJylTgcoMKVpgf5lsRaALcBS7CaSAIoz?usp=sharing",
+    "icon": "palette",
+    "desc": "يوجه هذا النموذج عملية الرسم الفني بأنماط وخامات مختلفة، مع وصف بصري قابل للاستخدام في التصميم أو التوليد."
+  },
+  {
+    "title": "فن التصميم بالرمل",
+    "sourceTitle": "فن التصميم بالرمل",
+    "cat": "drawing",
+    "chatgpt": "https://chatgpt.com/g/g-68ea5184949c8191bff1243db62e8622-fn-lrsm-bltrb-dust-drawing-art",
+    "gemini": "https://gemini.google.com/gem/1XRVJ6ho1ggj2rzYkTGuMqTV8w6HDVe3p?usp=sharing",
+    "icon": "palette",
+    "desc": "يوجه هذا النموذج عملية الرسم الفني بأنماط وخامات مختلفة، مع وصف بصري قابل للاستخدام في التصميم أو التوليد."
+  },
+  {
+    "title": "فن التصميم بالتطريز",
+    "sourceTitle": "فن التصميم بالتطريز",
+    "cat": "drawing",
+    "chatgpt": "https://chatgpt.com/g/g-68eb3a99d38c8191a5b835e94e8858e8-fn-lrsm-blkhywt-w-lttryz-string-art",
+    "gemini": "https://gemini.google.com/gem/1r8BJ8MpgJ90vvOhK76EfKQBRkmGeH4dM?usp=sharing",
+    "icon": "palette",
+    "desc": "يوجه هذا النموذج عملية الرسم الفني بأنماط وخامات مختلفة، مع وصف بصري قابل للاستخدام في التصميم أو التوليد."
+  },
+  {
+    "title": "تصميم أزياء تراثية",
+    "sourceTitle": "تصميم أزياء تراثية",
+    "cat": "fashion",
+    "chatgpt": "https://chatgpt.com/g/g-6900bd6bf68c819180cd6f3cad05f33d-tsmym-zy-trthy-sh-by-traditional-fashion",
+    "gemini": "https://gemini.google.com/gem/1cJqgFrezC5F3h8h86oO4TEZa1tHErRoI?usp=sharing",
+    "icon": "fabric",
+    "desc": "يدعم هذا النموذج تصميم الأزياء والإكسسوارات والقوالب الجمالية مع ضبط الخامة والهوية والأسلوب البصري."
+  },
+  {
+    "title": "تصميم أزياء مستقبلية",
+    "sourceTitle": "تصميم أزياء مستقبلية",
+    "cat": "fashion",
+    "chatgpt": "https://chatgpt.com/g/g-68db747b415c8191ac1be424880a0200-msmm-zy-mstqbly-holographic-designer",
+    "gemini": "https://gemini.google.com/gem/1tQj9q6Frseorf2mWz-2sb1HGMSjuM8xc?usp=sharing",
+    "icon": "fabric",
+    "desc": "يدعم هذا النموذج تصميم الأزياء والإكسسوارات والقوالب الجمالية مع ضبط الخامة والهوية والأسلوب البصري."
+  },
+  {
+    "title": "تصميم قوالب لؤلؤية",
+    "sourceTitle": "تصميم قوالب لؤلؤية",
+    "cat": "fashion",
+    "chatgpt": "https://chatgpt.com/g/g-68e9cba77b80819188c547747e96a5c8-tsmym-qwlb-lwlwy-pearl-template-design",
+    "gemini": "https://gemini.google.com/gem/1RbFkXEn6Rf6No02yRoPc-VxoInSM-uAJ?usp=sharing",
+    "icon": "cover",
+    "desc": "يدعم هذا النموذج تصميم الأزياء والإكسسوارات والقوالب الجمالية مع ضبط الخامة والهوية والأسلوب البصري."
+  },
+  {
+    "title": "تصميم فن الأظافر",
+    "sourceTitle": "تصميم فن الأظافر",
+    "cat": "fashion",
+    "chatgpt": "https://chatgpt.com/g/g-68e9d5fd53248191b98ca90ff725ac1e-tsmym-fnw-lzfr-artnail-studio",
+    "gemini": "https://gemini.google.com/gem/10D1bPeA9bVsWcUw9SW64Vx7Gs49c7AkP?usp=sharing",
+    "icon": "fabric",
+    "desc": "يدعم هذا النموذج تصميم الأزياء والإكسسوارات والقوالب الجمالية مع ضبط الخامة والهوية والأسلوب البصري."
+  },
+  {
+    "title": "توليد الصور السريالية",
+    "sourceTitle": "توليد الصور السريالية",
+    "cat": "surreal",
+    "chatgpt": "https://chatgpt.com/g/g-67e68559a44081918da430a14744d30b-bwt-twlyd-lswr-lsryly-surreal-images",
+    "gemini": "https://gemini.google.com/gem/1opw-ZunNDuk7rZbBGmpYCq7ULkCdhAHb?usp=sharing",
+    "icon": "palette",
+    "desc": "يساعد هذا النموذج على توليد مشاهد وبورتريهات سريالية عالية الخيال، مع تنظيم الضوء والتكوين والرمزية."
+  },
+  {
+    "title": "توليد بورتريه سريالية",
+    "sourceTitle": "توليد بورتريه سريالية",
+    "cat": "surreal",
+    "chatgpt": "https://chatgpt.com/g/g-68e60a5b200c8191be94eb5f388d0e58-twlyd-bwrtryht-sryly-surreal-portraits",
+    "gemini": "https://gemini.google.com/gem/1KAq49UVrax43kf51wgOoEbbTlMmMpKra?usp=sharing",
+    "icon": "face",
+    "desc": "يساعد هذا النموذج على توليد مشاهد وبورتريهات سريالية عالية الخيال، مع تنظيم الضوء والتكوين والرمزية."
+  },
+  {
+    "title": "دليل الإضاءة",
+    "sourceTitle": "دليل الإضاءة",
+    "cat": "lighting",
+    "chatgpt": "https://chatgpt.com/g/g-68ee5e39a0308191b7bfbdc97be231de-dlyl-ld-lighting-guide",
+    "gemini": "https://gemini.google.com/gem/1soWMAl5lovX1mDgZZeiNohAjKImpQ82n?usp=sharing",
+    "icon": "camera",
+    "desc": "يضبط هذا النموذج الإضاءة والتأثيرات الضوئية والانعكاسات، بما يخدم المشهد الفني أو المنتج أو الوجه."
+  },
+  {
+    "title": "انعكاس الطيف على الأجسام",
+    "sourceTitle": "انعكاس الطيف على الأجسام",
+    "cat": "lighting",
+    "chatgpt": "https://chatgpt.com/g/g-68e9de8d59bc81919b5f09eed5c68ec2-twlyd-lrwy-lqzhy-ltyfy-iribiovision",
+    "gemini": "https://gemini.google.com/gem/1ETl5r7iOGt4xJT9i7gvBzu4JoqO6E_ZR?usp=sharing",
+    "icon": "camera",
+    "desc": "يضبط هذا النموذج الإضاءة والتأثيرات الضوئية والانعكاسات، بما يخدم المشهد الفني أو المنتج أو الوجه."
+  },
+  {
+    "title": "توليد مشهد بإضاءة نيون",
+    "sourceTitle": "توليد مشهد بإضاءة نيون",
+    "cat": "lighting",
+    "chatgpt": "https://chatgpt.com/g/g-68e6178aceec8191b362103f01e37a4e-twlyd-mshhd-bnmt-nywn-neon-scene",
+    "gemini": "https://gemini.google.com/gem/1n4rMKHv8QefD43LTi3eVxZ3AwdhMb26z?usp=sharing",
+    "icon": "camera",
+    "desc": "يضبط هذا النموذج الإضاءة والتأثيرات الضوئية والانعكاسات، بما يخدم المشهد الفني أو المنتج أو الوجه."
+  },
+  {
+    "title": "إظهار الكائن بأشعة سينية",
+    "sourceTitle": "إظهار الكائن بأشعة سينية",
+    "cat": "lighting",
+    "chatgpt": "https://chatgpt.com/g/g-69a08499828c819181b226fb085eab4a-rd-lhywn-bsh-syny-x-ray-animal-reference",
+    "gemini": "https://gemini.google.com/gem/17nrh3zr-sRIiDeJ_2XCjKBGeN1Bzl_ff?usp=sharing",
+    "icon": "camera",
+    "desc": "يضبط هذا النموذج الإضاءة والتأثيرات الضوئية والانعكاسات، بما يخدم المشهد الفني أو المنتج أو الوجه."
+  },
+  {
+    "title": "تحسين إضاءة الوجه",
+    "sourceTitle": "تحسين إضاءة الوجه",
+    "cat": "lighting",
+    "chatgpt": "https://chatgpt.com/g/g-69a8f2dc4fd08191bbe287d4727afa20-thsyn-d-lwjh-enhance-facial-lighting",
+    "gemini": "https://gemini.google.com/gem/1TkopdO5Kii9gyg0cjhCIQuPvTHbv4ZB_?usp=sharing",
+    "icon": "face",
+    "desc": "يضبط هذا النموذج الإضاءة والتأثيرات الضوئية والانعكاسات، بما يخدم المشهد الفني أو المنتج أو الوجه."
+  },
+  {
+    "title": "تأثير نيون على الحواف",
+    "sourceTitle": "تأثير نيون على الحواف",
+    "cat": "lighting",
+    "chatgpt": "https://chatgpt.com/g/g-68e7347fb848819186864198af53dead-tthyr-nywn-l-lhwf-neon-edge-effect",
+    "gemini": "https://gemini.google.com/gem/1VJgLRGFJetuycTXptpM6rhp2ekA4mhVh?usp=sharing",
+    "icon": "camera",
+    "desc": "يضبط هذا النموذج الإضاءة والتأثيرات الضوئية والانعكاسات، بما يخدم المشهد الفني أو المنتج أو الوجه."
+  },
+  {
+    "title": "تصميم ملامح افريقية",
+    "sourceTitle": "تصميم ملامح افريقية",
+    "cat": "african",
+    "chatgpt": "https://chatgpt.com/g/g-68ee23f314c481918bdd37fec6a4ec04-lkhyl-lhtfly-lfryqy-african-imagination",
+    "gemini": "https://gemini.google.com/gem/1J0KisiYXsYCbIrFzYywKcxPGigb6JcOd?usp=sharing",
+    "icon": "face",
+    "desc": "يدعم هذا النموذج تصميم ملامح وأزياء مستوحاة من التراث الإفريقي بأسلوب بصري احترافي ومنظم."
+  },
+  {
+    "title": "تصميم أزياء افريقية",
+    "sourceTitle": "تصميم أزياء افريقية",
+    "cat": "african",
+    "chatgpt": "https://chatgpt.com/g/g-68ee2244e84c8191af7857dbbcd67bcc-lmshhd-lhtfly-lfryqy-african-festive-scene",
+    "gemini": "https://gemini.google.com/gem/1flmDo1ACClGvSCOp1t6cBkvGdaJxjWG6?usp=sharing",
+    "icon": "fabric",
+    "desc": "يدعم هذا النموذج تصميم ملامح وأزياء مستوحاة من التراث الإفريقي بأسلوب بصري احترافي ومنظم."
+  },
+  {
+    "title": "دليل الخامات",
+    "sourceTitle": "دليل الخامات",
+    "cat": "textures",
+    "chatgpt": "https://chatgpt.com/g/g-6833e646136c81918467ce9987543325-bwt-nsh-lkhmt-texture-generator",
+    "gemini": "https://gemini.google.com/gem/1DcQL9Q-4moMbLV9-wTYpTuG1hVGs0mw5?usp=sharing",
+    "icon": "fabric",
+    "desc": "يساعد هذا النموذج على توليد الخامات أو دمجها على الشعار أو النص أو الوجه أو القماش بصورة فنية متماسكة."
+  },
+  {
+    "title": "تصميم الخامات على الشعار",
+    "sourceTitle": "#تصميم الخامات على الشعار",
+    "cat": "textures",
+    "chatgpt": "https://chatgpt.com/g/g-69ab1906b2f881918b63c1f4cef4eaed-tsmym-khmt-lsh-r-logo-material-design",
+    "gemini": "https://gemini.google.com/gem/1a2pc48dp-vtgmicWzEKtBPiy469rSNuO?usp=sharing",
+    "icon": "fabric",
+    "desc": "يساعد هذا النموذج على توليد الخامات أو دمجها على الشعار أو النص أو الوجه أو القماش بصورة فنية متماسكة."
+  },
+  {
+    "title": "تصميم الخامات على الكتابة",
+    "sourceTitle": "#تصميم الخامات على الكتابة",
+    "cat": "textures",
+    "chatgpt": "https://chatgpt.com/g/g-68b3d113826481919d996921ede62029-wd-khmt-l-lnsws",
+    "gemini": "https://gemini.google.com/gem/1QoQ9pX52PDmZUNaKR0q9vIlmQQ3RDw5Z?usp=sharing",
+    "icon": "type",
+    "desc": "يساعد هذا النموذج على توليد الخامات أو دمجها على الشعار أو النص أو الوجه أو القماش بصورة فنية متماسكة."
+  },
+  {
+    "title": "تصميم الخامات على الوجه",
+    "sourceTitle": "تصميم الخامات على الوجه",
+    "cat": "textures",
+    "chatgpt": "https://chatgpt.com/g/g-68e757dea7ec8191a54bee0346972fa1-dmj-lkhmt-l-lwjwh-face-texture-fusion",
+    "gemini": "https://gemini.google.com/gem/1jwmt8O0tQ_5HPNBBH3U7c4GJ5ode9nNe?usp=sharing",
+    "icon": "face",
+    "desc": "يساعد هذا النموذج على توليد الخامات أو دمجها على الشعار أو النص أو الوجه أو القماش بصورة فنية متماسكة."
+  },
+  {
+    "title": "تصميم الخامات على القماش",
+    "sourceTitle": "تصميم الخامات على القماش",
+    "cat": "textures",
+    "chatgpt": "https://chatgpt.com/g/g-68e0c0362da88191a11cf6f28cd295fd-tsmym-zy-bstkhdm-qt-qmsh-ai-stylist",
+    "gemini": "https://gemini.google.com/gem/1j0-OpeSH0t0KO3PdrU8MmYKbnKzibTcI?usp=sharing",
+    "icon": "fabric",
+    "desc": "يساعد هذا النموذج على توليد الخامات أو دمجها على الشعار أو النص أو الوجه أو القماش بصورة فنية متماسكة."
+  }
 ];
 const els={
   cards:document.getElementById('cardsGrid'),
@@ -911,8 +1262,8 @@ function renderCards(){
     <p class="card-desc">${t.desc}</p>
     <div class="card-actions">
       <button class="btn primary details" type="button" data-open="${tools.indexOf(t)}">عرض التفاصيل والتشغيل</button>
-      <button class="btn ghost platform-btn" type="button">${svgIcon('star')}<span>Gemini</span></button>
-      <button class="btn ghost platform-btn" type="button">${svgIcon('brain')}<span>ChatGPT</span></button>
+      <a class="btn ghost platform-btn" href="${t.gemini||PLATFORM_LINKS.gemini}" target="_blank" rel="noopener noreferrer" aria-label="تشغيل ${t.title} على Gemini">${svgIcon('star')}<span>Gemini</span></a>
+      <a class="btn ghost platform-btn" href="${t.chatgpt||PLATFORM_LINKS.chatgpt}" target="_blank" rel="noopener noreferrer" aria-label="تشغيل ${t.title} على ChatGPT">${svgIcon('brain')}<span>ChatGPT</span></a>
     </div>
   </article>`).join('');
   els.cards.querySelectorAll('.tool-card').forEach(card=>card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();card.style.setProperty('--mx',`${e.clientX-r.left}px`);card.style.setProperty('--my',`${e.clientY-r.top}px`)}));
@@ -924,7 +1275,11 @@ function openTool(index){
   state.active=t;
   els.modalTitle.textContent=t.title;
   els.modalCategory.textContent=categoryName(t.cat);
-  els.modalBody.innerHTML=`<p>${t.desc}</p><p><strong>الدمج الهولوغرافي:</strong> تظهر الأداة داخل بطاقة زجاجية داكنة، مع أيقونة SVG دائرية محاطة بحلقتين ضوئيتين متحركتين، وحافة نيون خضراء، ومنصة إضاءة ناعمة تجعل الواجهة أقرب إلى واجهات النيون الهولوغرافية الاحترافية.</p><p><strong>قابلية الربط:</strong> يمكن استبدال أزرار ChatGPT وGemini بروابط تشغيل مباشرة دون تغيير التصميم العام.</p>`;
+  els.modalBody.innerHTML=`<p>${t.desc}</p><p><strong>الدمج الهولوغرافي:</strong> تظهر الأداة داخل بطاقة زجاجية داكنة، مع أيقونة SVG دائرية محاطة بحلقتين ضوئيتين متحركتين، وحافة نيون خضراء، ومنصة إضاءة ناعمة تجعل الواجهة أقرب إلى واجهات النيون الهولوغرافية الاحترافية.</p><p><strong>قابلية الربط:</strong> تعمل أزرار ChatGPT وGemini الآن كروابط مباشرة قابلة للفتح في تبويب جديد، ويمكن لاحقًا استبدال الروابط العامة بروابط النماذج الخاصة لكل أداة.</p>`;
+  const chatLink=document.getElementById('modalChatGPT');
+  const geminiLink=document.getElementById('modalGemini');
+  if(chatLink) chatLink.href=t.chatgpt||PLATFORM_LINKS.chatgpt;
+  if(geminiLink) geminiLink.href=t.gemini||PLATFORM_LINKS.gemini;
   els.modal.classList.add('open');
   els.modal.setAttribute('aria-hidden','false');
 }
